@@ -1,0 +1,744 @@
+package enchanter;
+
+import java.util.Arrays;
+import java.util.List;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
+
+public class Commands extends org.bukkit.plugin.java.JavaPlugin implements org.bukkit.event.Listener
+{
+  FileConfiguration config = getConfig();
+  
+  private static Economy eco = null;
+  
+  public Commands() {}
+  
+  public void loadConfiguration() {}
+  
+  public void onEnable() {
+    loadConfiguration();
+    saveDefaultConfig();
+    reloadConfig();
+    getConfig().options().copyDefaults(true);
+    saveConfig();
+    getServer().getPluginManager().registerEvents(this, this);
+    setupEconomy();
+  }
+  
+  private boolean setupEconomy()
+  {
+    RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
+    if (economyProvider != null) {
+      eco = (Economy)economyProvider.getProvider();
+    }
+    
+    return eco != null;
+  }
+  
+  public void onDisable() {
+    saveDefaultConfig();
+  }
+  
+  Inventory mainInventory = Bukkit.createInventory(null, 54, ChatColor.DARK_GREEN + "Enchanters shop");
+  
+  Inventory SwordMain = Bukkit.createInventory(null, 36, ChatColor.AQUA + "Sword Enchanting");
+  
+  Inventory ShieldMain = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Shield Enchanting");
+  
+  Inventory AxeMain = Bukkit.createInventory(null, 36, ChatColor.RED + "Axe Enchanting");
+  
+  Inventory BookMain = Bukkit.createInventory(null, 36, ChatColor.DARK_AQUA + "Arcane enchanting");
+  
+  Inventory BowMain = Bukkit.createInventory(null, 36, ChatColor.LIGHT_PURPLE + "Bow Enchanting");
+  
+  Inventory ForgeMain = Bukkit.createInventory(null, 36, ChatColor.GOLD + "Forge your weapons ");
+  
+  Inventory NetherrackMain = Bukkit.createInventory(null, 36, ChatColor.BLACK + "Dark enchanting");
+  
+
+
+
+  Inventory SwordMainConfirmationSharpBook = Bukkit.createInventory(null, 9, ChatColor.AQUA + "Are you sure you wish to continue?");
+  
+  Inventory SwordMainConfirmationUnbreakingBook = Bukkit.createInventory(null, 9, ChatColor.AQUA + "Are you sure you wish to continue?");
+  
+  Inventory SwordMainConfirmationKnockbackBook = Bukkit.createInventory(null, 9, ChatColor.AQUA + "Are you sure you wish to continue?");
+  
+  Inventory SwordMainConfirmationFireAspectBook = Bukkit.createInventory(null, 9, ChatColor.AQUA + "Are you sure you wish to continue?");
+  
+  Inventory SwordMainConfirmationLootingBook = Bukkit.createInventory(null, 9, ChatColor.AQUA + "Are you sure you wish to continue?");
+  
+  Inventory SwordMainConfirmationSmiteBook = Bukkit.createInventory(null, 9, ChatColor.AQUA + "Are you sure you wish to continue?");
+  
+  Inventory SwordMainConfirmationArcaneFrostBook = Bukkit.createInventory(null, 9, ChatColor.AQUA + "Are you sure you wish to continue?");
+  
+  Inventory SwordMainConfirmationArcaneFrostBurnBook = Bukkit.createInventory(null, 9, ChatColor.AQUA + "Are you sure you wish to continue?");
+  
+  Inventory SwordMainConfirmationArcaneIceShardsBook = Bukkit.createInventory(null, 9, ChatColor.AQUA + "Are you sure you wish to continue?");
+  
+
+
+
+  Inventory ShieldMainConfirmationUnbreakingShieldBook = Bukkit.createInventory(null, 9, ChatColor.YELLOW + "Are you sure you wish to continue?");
+  
+  Inventory ShieldMainConfirmationKnockbackShieldBook = Bukkit.createInventory(null, 9, ChatColor.YELLOW + "Are you sure you wish to continue?");
+  
+  Inventory ShieldMainConfirmationPoisonShieldBook = Bukkit.createInventory(null, 9, ChatColor.YELLOW + "Are you sure you wish to continue?");
+  
+  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    if (cmd.getName().equalsIgnoreCase("Enchanter")) {
+      Player p = (Player)sender;
+      if ((p.hasPermission("enchanter.use")) && 
+        (!(sender instanceof Player))) {
+        sender.sendMessage("This cannot be run from the console!");
+        return true;
+      }
+      
+
+      ItemStack Sword = new ItemStack(Material.IRON_SWORD, 1);
+      ItemMeta Swordmeta = Sword.getItemMeta();
+      Swordmeta.setDisplayName(ChatColor.AQUA + "Sword enchants");
+      Sword.setItemMeta(Swordmeta);
+      
+      ItemStack Axe = new ItemStack(Material.GOLD_AXE, 1);
+      ItemMeta Axemeta = Axe.getItemMeta();
+      Axemeta.setDisplayName(ChatColor.RED + "Axe enchants");
+      Axe.setItemMeta(Axemeta);
+      
+      ItemStack Shield = new ItemStack(Material.SHIELD, 1);
+      ItemMeta Shieldmeta = Shield.getItemMeta();
+      Shieldmeta.setDisplayName(ChatColor.YELLOW + "Shield Enchants");
+      Shield.setItemMeta(Shieldmeta);
+      
+      ItemStack BackArrow = new ItemStack(Material.ARROW, 1);
+      ItemMeta Backarrowmeta = BackArrow.getItemMeta();
+      Backarrowmeta.setDisplayName(ChatColor.RED + "Go back");
+      BackArrow.setItemMeta(Backarrowmeta);
+      
+      ItemStack Bow = new ItemStack(Material.BOW, 1);
+      ItemMeta Bowmeta = Bow.getItemMeta();
+      Bowmeta.setDisplayName(ChatColor.DARK_PURPLE + "Bow enchants");
+      Bow.setItemMeta(Bowmeta);
+      
+      ItemStack Lava = new ItemStack(Material.LAVA_BUCKET);
+      ItemMeta Lavameta = Lava.getItemMeta();
+      Lavameta.setDisplayName(ChatColor.GOLD + "Forge weapons");
+      Lava.setItemMeta(Lavameta);
+      
+      ItemStack NetherrackDecoration = new ItemStack(Material.NETHERRACK);
+      ItemMeta NetherrackDecorationmeta = NetherrackDecoration.getItemMeta();
+      NetherrackDecorationmeta.setDisplayName(ChatColor.BLACK + "Cursed weapon enchants");
+      NetherrackDecoration.setItemMeta(NetherrackDecorationmeta);
+      
+      ItemStack Book = new ItemStack(Material.ENCHANTED_BOOK);
+      ItemMeta Bookmeta = Book.getItemMeta();
+      Bookmeta.setDisplayName(ChatColor.DARK_BLUE + "Arcane book enchants");
+      Book.setItemMeta(Bookmeta);
+      
+
+      ItemStack SharpBook = new ItemStack(Material.BOOK);
+      ItemMeta SharpBookmeta = SharpBook.getItemMeta();
+      SharpBookmeta.setDisplayName(ChatColor.GRAY + "Sharpness");
+      SharpBook.setItemMeta(SharpBookmeta);
+      
+      ItemStack UnbreakingBook = new ItemStack(Material.BOOK);
+      ItemMeta UnbreakingBookmeta = UnbreakingBook.getItemMeta();
+      UnbreakingBookmeta.setDisplayName(ChatColor.GRAY + "Unbreaking");
+      UnbreakingBook.setItemMeta(UnbreakingBookmeta);
+      
+      ItemStack KnockbackBook = new ItemStack(Material.BOOK);
+      ItemMeta KnockbackBookmeta = KnockbackBook.getItemMeta();
+      KnockbackBookmeta.setDisplayName(ChatColor.GOLD + "Knockback");
+      KnockbackBook.setItemMeta(KnockbackBookmeta);
+      
+      ItemStack FireAspectBook = new ItemStack(Material.BOOK);
+      ItemMeta FireAspectBookmeta = FireAspectBook.getItemMeta();
+      FireAspectBookmeta.setDisplayName(ChatColor.RED + "Fire aspect");
+      FireAspectBook.setItemMeta(FireAspectBookmeta);
+      
+      ItemStack LootingBook = new ItemStack(Material.BOOK);
+      ItemMeta LootingBookmeta = LootingBook.getItemMeta();
+      LootingBookmeta.setDisplayName(ChatColor.DARK_PURPLE + "Looting");
+      LootingBook.setItemMeta(LootingBookmeta);
+      
+      ItemStack SmiteBook = new ItemStack(Material.BOOK);
+      ItemMeta SmiteBookmeta = SmiteBook.getItemMeta();
+      SmiteBookmeta.setDisplayName(ChatColor.DARK_GRAY + "Smite");
+      SmiteBook.setItemMeta(SmiteBookmeta);
+      
+      ItemStack ArcaneFrostBook = new ItemStack(Material.BOOK);
+      ItemMeta ArcaneFrostBookmeta = ArcaneFrostBook.getItemMeta();
+      ArcaneFrostBookmeta.setDisplayName(ChatColor.DARK_BLUE + "Arcane frost book");
+      ArcaneFrostBookmeta.setLore(Arrays.asList(new String[] { ChatColor.BLUE + "A rare arcane enchant" }));
+      ArcaneFrostBook.setItemMeta(ArcaneFrostBookmeta);
+      
+      ItemStack ArcaneFrostBurnBook = new ItemStack(Material.BOOK);
+      ItemMeta ArcaneFrostBurnBookmeta = ArcaneFrostBurnBook.getItemMeta();
+      ArcaneFrostBurnBookmeta.setDisplayName(ChatColor.DARK_BLUE + "Arcane" + ChatColor.AQUA + "frost" + ChatColor.RED + " Burn");
+      ArcaneFrostBurnBookmeta.setLore(Arrays.asList(new String[] { ChatColor.BLUE + "A rare arcane enchant" }));
+      ArcaneFrostBurnBook.setItemMeta(ArcaneFrostBurnBookmeta);
+      
+      ItemStack ArcaneIceShardsBook = new ItemStack(Material.BOOK);
+      ItemMeta ArcaneIceShardsBookmeta = ArcaneIceShardsBook.getItemMeta();
+      ArcaneIceShardsBookmeta.setDisplayName(ChatColor.DARK_BLUE + "Arcane" + ChatColor.BLUE + "Ice" + ChatColor.AQUA + "Shards");
+      ArcaneIceShardsBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "A Legendary frozen arcane enchant" }));
+      ArcaneIceShardsBook.setItemMeta(ArcaneIceShardsBookmeta);
+      
+
+      ItemStack UnbreakingShieldBook = new ItemStack(Material.BOOK);
+      ItemMeta UnbreakingShieldBookmeta = UnbreakingShieldBook.getItemMeta();
+      UnbreakingShieldBookmeta.setDisplayName(ChatColor.GRAY + "Unbreaking");
+      UnbreakingShieldBook.setItemMeta(UnbreakingShieldBookmeta);
+      
+      ItemStack KnockbackShieldBook = new ItemStack(Material.BOOK);
+      ItemMeta KnockbackShieldBookmeta = KnockbackShieldBook.getItemMeta();
+      KnockbackShieldBookmeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Knockback");
+      KnockbackShieldBook.setItemMeta(KnockbackShieldBookmeta);
+      
+      ItemStack PoisonShieldBook = new ItemStack(Material.BOOK);
+      ItemMeta PoisonShieldBookmeta = PoisonShieldBook.getItemMeta();
+      PoisonShieldBookmeta.setDisplayName(ChatColor.GREEN + "Poison");
+      PoisonShieldBook.setItemMeta(PoisonShieldBookmeta);
+      
+      ItemStack ArcaneStunBook = new ItemStack(Material.BOOK);
+      ItemMeta ArcaneStunBookmeta = ArcaneStunBook.getItemMeta();
+      ArcaneStunBookmeta.setDisplayName(ChatColor.YELLOW + "Arcane" + ChatColor.GOLD + " Stun");
+      ArcaneStunBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "Stuns your enemies on hit" }));
+      ArcaneStunBook.setItemMeta(ArcaneStunBookmeta);
+      
+      ItemStack ArcaneWeakenShieldBook = new ItemStack(Material.BOOK);
+      ItemMeta ArcaneWeakenShieldBookmeta = ArcaneWeakenShieldBook.getItemMeta();
+      ArcaneWeakenShieldBookmeta.setDisplayName(ChatColor.DARK_PURPLE + "Arcane" + ChatColor.LIGHT_PURPLE + " weaken");
+      ArcaneWeakenShieldBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "slowy weakens your enemies" }));
+      ArcaneWeakenShieldBook.setItemMeta(ArcaneWeakenShieldBookmeta);
+      
+
+
+
+      ItemStack uncommonArcaneStunBook = new ItemStack(Material.BOOK);
+      ItemMeta uncommonArcaneStunBookmeta = uncommonArcaneStunBook.getItemMeta();
+      uncommonArcaneStunBookmeta.setDisplayName(ChatColor.YELLOW + "Arcane" + ChatColor.GOLD + " Stun");
+      uncommonArcaneStunBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "Stuns your enemies on hit" }));
+      uncommonArcaneStunBook.setItemMeta(uncommonArcaneStunBookmeta);
+      
+
+      ItemStack UncommonSpeedBook = new ItemStack(Material.BOOK);
+      ItemMeta UncommonSpeedBookmeta = UncommonSpeedBook.getItemMeta();
+      UncommonSpeedBookmeta.setDisplayName(ChatColor.YELLOW + "Arcane" + ChatColor.RED + " Speed Book");
+      UncommonSpeedBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "makes you move faster with a bow" }));
+      UncommonSpeedBook.setItemMeta(UncommonSpeedBookmeta);
+      
+
+      ItemStack RareArcaneFrostBook = new ItemStack(Material.BOOK);
+      ItemMeta RareArcaneFrostBookmeta = RareArcaneFrostBook.getItemMeta();
+      RareArcaneFrostBookmeta.setDisplayName(ChatColor.DARK_BLUE + "Arcane frost book");
+      RareArcaneFrostBookmeta.setLore(Arrays.asList(new String[] { ChatColor.BLUE + "A rare arcane enchant" }));
+      RareArcaneFrostBook.setItemMeta(RareArcaneFrostBookmeta);
+      
+
+      ItemStack RareArcaneFrostBurnBook = new ItemStack(Material.BOOK);
+      ItemMeta RareArcaneFrostBurnBookmeta = RareArcaneFrostBurnBook.getItemMeta();
+      RareArcaneFrostBurnBookmeta.setDisplayName(ChatColor.DARK_BLUE + "Arcane" + ChatColor.AQUA + "frost" + ChatColor.RED + " Burn");
+      RareArcaneFrostBurnBookmeta.setLore(Arrays.asList(new String[] { ChatColor.BLUE + "A rare arcane enchant" }));
+      RareArcaneFrostBurnBook.setItemMeta(RareArcaneFrostBurnBookmeta);
+      
+
+      ItemStack RareArcaneLightningAxeBook = new ItemStack(Material.BOOK);
+      ItemMeta RareArcaneLightningAxeBookmeta = RareArcaneLightningAxeBook.getItemMeta();
+      RareArcaneLightningAxeBookmeta.setDisplayName(ChatColor.YELLOW + "Arcane" + ChatColor.WHITE + " Lightning");
+      RareArcaneLightningAxeBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "Summon lighting from your axe" }));
+      RareArcaneLightningAxeBook.setItemMeta(RareArcaneLightningAxeBookmeta);
+      
+
+      ItemStack LegendaryUnknown = new ItemStack(Material.BOOK);
+      ItemMeta LegendaryUnknownmeta = LegendaryUnknown.getItemMeta();
+      LegendaryUnknownmeta.setDisplayName(ChatColor.BLACK + "unknown");
+      LegendaryUnknownmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_GRAY + "found from a corupt universe" }));
+      LegendaryUnknown.setItemMeta(LegendaryUnknownmeta);
+      
+
+      ItemStack LegendaryArcaneWeakenShieldBook = new ItemStack(Material.BOOK);
+      ItemMeta LegendaryArcaneWeakenShieldBookmeta = LegendaryArcaneWeakenShieldBook.getItemMeta();
+      LegendaryArcaneWeakenShieldBookmeta.setDisplayName(ChatColor.DARK_PURPLE + "Arcane" + ChatColor.LIGHT_PURPLE + " weaken");
+      LegendaryArcaneWeakenShieldBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "slowy weakens your enemies" }));
+      LegendaryArcaneWeakenShieldBook.setItemMeta(LegendaryArcaneWeakenShieldBookmeta);
+      
+
+      ItemStack LegendaryArcaneIceShardsBook = new ItemStack(Material.BOOK);
+      ItemMeta LegendaryArcaneIceShardsBookmeta = LegendaryArcaneIceShardsBook.getItemMeta();
+      LegendaryArcaneIceShardsBookmeta.setDisplayName(ChatColor.DARK_BLUE + "Arcane" + ChatColor.BLUE + "Ice" + ChatColor.AQUA + "Shards");
+      LegendaryArcaneIceShardsBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "A Legendary frozen arcane enchant" }));
+      LegendaryArcaneIceShardsBook.setItemMeta(LegendaryArcaneIceShardsBookmeta);
+      
+
+
+      ItemStack DoubleBondAxeBook = new ItemStack(Material.BOOK);
+      ItemMeta DoubleBondAxeBookmeta = DoubleBondAxeBook.getItemMeta();
+      DoubleBondAxeBookmeta.setDisplayName(ChatColor.DARK_RED + "Axe bonding");
+      DoubleBondAxeBook.setItemMeta(DoubleBondAxeBookmeta);
+      
+      ItemStack SmiteAxeBook = new ItemStack(Material.BOOK);
+      ItemMeta SmiteAxeBookmeta = SmiteAxeBook.getItemMeta();
+      SmiteAxeBookmeta.setDisplayName(ChatColor.DARK_GRAY + "Smite");
+      SmiteAxeBook.setItemMeta(SmiteAxeBookmeta);
+      
+      ItemStack ArcaneLightningAxeBook = new ItemStack(Material.BOOK);
+      ItemMeta ArcaneLightningAxeBookmeta = ArcaneLightningAxeBook.getItemMeta();
+      ArcaneLightningAxeBookmeta.setDisplayName(ChatColor.YELLOW + "Arcane" + ChatColor.WHITE + " Lightning");
+      ArcaneLightningAxeBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "Summon lighting from your axe" }));
+      ArcaneLightningAxeBook.setItemMeta(ArcaneLightningAxeBookmeta);
+      
+      ItemStack UnbreakingAxeBook = new ItemStack(Material.BOOK);
+      ItemMeta UnbreakingAxeBookmeta = UnbreakingAxeBook.getItemMeta();
+      UnbreakingAxeBookmeta.setDisplayName(ChatColor.GRAY + "Unbreaking");
+      UnbreakingAxeBook.setItemMeta(UnbreakingAxeBookmeta);
+      
+      ItemStack SharpAxeBook = new ItemStack(Material.BOOK);
+      ItemMeta SharpAxeBookmeta = SharpAxeBook.getItemMeta();
+      SharpAxeBookmeta.setDisplayName(ChatColor.GRAY + "Sharpness");
+      SharpAxeBook.setItemMeta(SharpAxeBookmeta);
+      
+      ItemStack KnockbackAxeBook = new ItemStack(Material.BOOK);
+      ItemMeta KnockbackAxeBookmeta = KnockbackAxeBook.getItemMeta();
+      KnockbackAxeBookmeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Knockback");
+      KnockbackAxeBook.setItemMeta(KnockbackAxeBookmeta);
+      
+
+
+      ItemStack PowerBowBook = new ItemStack(Material.BOOK);
+      ItemMeta PowerBowBookmeta = PowerBowBook.getItemMeta();
+      PowerBowBookmeta.setDisplayName(ChatColor.RED + "Power");
+      PowerBowBook.setItemMeta(PowerBowBookmeta);
+      
+      ItemStack UnbreakingBowBook = new ItemStack(Material.BOOK);
+      ItemMeta UnbreakingBowBookmeta = UnbreakingBowBook.getItemMeta();
+      UnbreakingBowBookmeta.setDisplayName(ChatColor.GRAY + "Unbreaking");
+      UnbreakingBowBook.setItemMeta(UnbreakingBowBookmeta);
+      
+      ItemStack FlameBowBook = new ItemStack(Material.BOOK);
+      ItemMeta FlameBowBookmeta = FlameBowBook.getItemMeta();
+      FlameBowBookmeta.setDisplayName(ChatColor.GOLD + "Flame");
+      FlameBowBook.setItemMeta(FlameBowBookmeta);
+      
+      ItemStack PunchBowBook = new ItemStack(Material.BOOK);
+      ItemMeta PunchBowBookmeta = PunchBowBook.getItemMeta();
+      PunchBowBookmeta.setDisplayName(ChatColor.GREEN + "Punch");
+      PunchBowBook.setItemMeta(PunchBowBookmeta);
+      
+      ItemStack BowSpeedBook = new ItemStack(Material.BOOK);
+      ItemMeta BowSpeedBookmeta = BowSpeedBook.getItemMeta();
+      BowSpeedBookmeta.setDisplayName(ChatColor.YELLOW + "Arcane" + ChatColor.RED + " Speed Book");
+      BowSpeedBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_AQUA + "makes you move faster with a bow" }));
+      BowSpeedBook.setItemMeta(BowSpeedBookmeta);
+      
+
+
+      ItemStack SpectralArrow = new ItemStack(Material.SPECTRAL_ARROW);
+      
+      ItemStack Arrow = new ItemStack(Material.ARROW);
+      
+      ItemStack leaves = new ItemStack(Material.LEAVES);
+      
+      ItemStack Wood = new ItemStack(Material.LOG);
+      
+      ItemStack Bookshelf = new ItemStack(Material.BOOKSHELF);
+      
+      ItemStack Feather = new ItemStack(Material.FEATHER);
+      
+      ItemStack BlueStainedGlass = new ItemStack(Material.THIN_GLASS);
+      
+
+
+
+      ItemStack ConfirmationSharpBook = new ItemStack(Material.WOOL, 1, (short)5);
+      ItemMeta ConfirmationSharpBookmeta = ConfirmationSharpBook.getItemMeta();
+      ConfirmationSharpBookmeta.setDisplayName(ChatColor.GREEN + "Purchase Enchantment?");
+      ConfirmationSharpBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_GREEN + "Sharpness" }));
+      ConfirmationSharpBook.setItemMeta(ConfirmationSharpBookmeta);
+      
+      ItemStack CancelSharpBook = new ItemStack(Material.WOOL, 1, (short)14);
+      ItemMeta CancelSharpBookmeta = CancelSharpBook.getItemMeta();
+      CancelSharpBookmeta.setDisplayName(ChatColor.RED + "Cancel purchase");
+      CancelSharpBookmeta.setLore(Arrays.asList(new String[] { ChatColor.RED + "Cancel your current enchantment" }));
+      CancelSharpBook.setItemMeta(CancelSharpBookmeta);
+      
+
+
+      ItemStack ConfirmationShieldUnbreakingBook = new ItemStack(Material.WOOL, 1, (short)5);
+      ItemMeta ConfirmationShieldUnbreakingBookmeta = ConfirmationShieldUnbreakingBook.getItemMeta();
+      ConfirmationShieldUnbreakingBookmeta.setDisplayName(ChatColor.GREEN + "Purchase Enchantment?");
+      ConfirmationShieldUnbreakingBookmeta.setLore(Arrays.asList(new String[] { ChatColor.DARK_GREEN + "Unbreaking" }));
+      ConfirmationShieldUnbreakingBook.setItemMeta(ConfirmationShieldUnbreakingBookmeta);
+      
+
+
+      Player player = (Player)sender;
+      player.openInventory(mainInventory);
+      
+      mainInventory.setItem(11, Sword);
+      mainInventory.setItem(13, Shield);
+      mainInventory.setItem(15, Book);
+      mainInventory.setItem(21, Axe);
+      mainInventory.setItem(23, Bow);
+      mainInventory.setItem(31, Lava);
+      mainInventory.setItem(40, NetherrackDecoration);
+      
+
+      SwordMain.setItem(10, SharpBook);
+      SwordMain.setItem(11, UnbreakingBook);
+      SwordMain.setItem(12, KnockbackBook);
+      SwordMain.setItem(13, FireAspectBook);
+      SwordMain.setItem(14, LootingBook);
+      SwordMain.setItem(15, SmiteBook);
+      SwordMain.setItem(16, ArcaneFrostBook);
+      SwordMain.setItem(22, ArcaneFrostBurnBook);
+      SwordMain.setItem(31, ArcaneIceShardsBook);
+      SwordMain.setItem(35, BackArrow);
+      
+
+      ShieldMain.setItem(0, Arrow);
+      ShieldMain.setItem(2, SpectralArrow);
+      ShieldMain.setItem(3, BlueStainedGlass);
+      ShieldMain.setItem(4, ArcaneWeakenShieldBook);
+      ShieldMain.setItem(10, SpectralArrow);
+      ShieldMain.setItem(11, BlueStainedGlass);
+      ShieldMain.setItem(12, KnockbackShieldBook);
+      ShieldMain.setItem(13, UnbreakingShieldBook);
+      ShieldMain.setItem(14, PoisonShieldBook);
+      ShieldMain.setItem(20, Arrow);
+      ShieldMain.setItem(21, BlueStainedGlass);
+      ShieldMain.setItem(22, ArcaneStunBook);
+      ShieldMain.setItem(26, BackArrow);
+      
+
+      BookMain.setItem(0, Bookshelf);
+      BookMain.setItem(1, Bookshelf);
+      BookMain.setItem(2, Bookshelf);
+      BookMain.setItem(3, Bookshelf);
+      BookMain.setItem(4, Bookshelf);
+      BookMain.setItem(5, Bookshelf);
+      BookMain.setItem(6, Bookshelf);
+      BookMain.setItem(7, Bookshelf);
+      BookMain.setItem(8, Bookshelf);
+      BookMain.setItem(9, Bookshelf);
+      BookMain.setItem(10, Bookshelf);
+      BookMain.setItem(11, LegendaryArcaneIceShardsBook);
+      BookMain.setItem(12, Bookshelf);
+      BookMain.setItem(13, LegendaryUnknown);
+      BookMain.setItem(14, Bookshelf);
+      BookMain.setItem(15, LegendaryArcaneWeakenShieldBook);
+      BookMain.setItem(16, Bookshelf);
+      BookMain.setItem(17, Bookshelf);
+      BookMain.setItem(18, Bookshelf);
+      BookMain.setItem(20, UncommonSpeedBook);
+      BookMain.setItem(21, RareArcaneFrostBook);
+      BookMain.setItem(22, RareArcaneLightningAxeBook);
+      BookMain.setItem(23, RareArcaneFrostBurnBook);
+      BookMain.setItem(24, uncommonArcaneStunBook);
+      BookMain.setItem(26, Bookshelf);
+      BookMain.setItem(27, Bookshelf);
+      BookMain.setItem(28, Bookshelf);
+      BookMain.setItem(29, Bookshelf);
+      BookMain.setItem(30, Bookshelf);
+      BookMain.setItem(31, Bookshelf);
+      BookMain.setItem(32, Bookshelf);
+      BookMain.setItem(33, Bookshelf);
+      BookMain.setItem(34, Bookshelf);
+      BookMain.setItem(35, BackArrow);
+      BookMain.setItem(0, Bookshelf);
+      
+
+      AxeMain.setItem(1, leaves);
+      AxeMain.setItem(2, leaves);
+      AxeMain.setItem(3, DoubleBondAxeBook);
+      AxeMain.setItem(4, SmiteAxeBook);
+      AxeMain.setItem(9, leaves);
+      AxeMain.setItem(10, Wood);
+      AxeMain.setItem(11, Wood);
+      AxeMain.setItem(12, ArcaneLightningAxeBook);
+      AxeMain.setItem(13, UnbreakingAxeBook);
+      AxeMain.setItem(19, Wood);
+      AxeMain.setItem(20, Wood);
+      AxeMain.setItem(22, SharpAxeBook);
+      AxeMain.setItem(28, Wood);
+      AxeMain.setItem(29, Wood);
+      AxeMain.setItem(31, KnockbackAxeBook);
+      AxeMain.setItem(35, BackArrow);
+      
+
+      BowMain.setItem(10, BowSpeedBook);
+      BowMain.setItem(11, PowerBowBook);
+      BowMain.setItem(12, UnbreakingBowBook);
+      BowMain.setItem(13, FlameBowBook);
+      BowMain.setItem(14, PunchBowBook);
+      BowMain.setItem(15, Feather);
+      
+
+      SwordMainConfirmationSharpBook.setItem(3, ConfirmationSharpBook);
+      SwordMainConfirmationSharpBook.setItem(5, CancelSharpBook);
+      SwordMainConfirmationSharpBook.setItem(8, BackArrow);
+      
+
+      player.updateInventory();
+    }
+    
+    return true;
+  }
+  
+  @EventHandler
+  public void onMainClick(InventoryClickEvent e)
+  {
+    Player p = (Player)e.getWhoClicked();
+    
+    if (e.getInventory().getName().equals(ChatColor.DARK_GREEN + "Enchanters shop")) {
+      e.setCancelled(true);
+      
+      ItemStack clicked = e.getCurrentItem();
+      if ((clicked != null) && (clicked.getType() != Material.AIR)) {
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.AQUA + "Sword enchants")) {
+          p.closeInventory();
+          p.openInventory(SwordMain);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "Shield Enchants")) {
+          p.closeInventory();
+          p.openInventory(ShieldMain);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.RED + "Axe enchants")) {
+          p.closeInventory();
+          p.openInventory(AxeMain);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.DARK_PURPLE + "Bow enchants")) {
+          p.closeInventory();
+          p.openInventory(BowMain);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.GOLD + "Forge weapons")) {
+          p.closeInventory();
+          p.openInventory(ForgeMain);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.BLACK + "Cursed weapon enchants")) {
+          p.closeInventory();
+          p.openInventory(NetherrackMain);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.DARK_BLUE + "Arcane book enchants")) {
+          p.closeInventory();
+          p.openInventory(BookMain);
+          return;
+        }
+      }
+    }
+  }
+  
+
+  @EventHandler
+  public void OnSwordClickevent(InventoryClickEvent e)
+  {
+    Player p = (Player)e.getWhoClicked();
+    
+
+    if (e.getInventory().getName().equals(ChatColor.AQUA + "Sword Enchanting")) {
+      e.setCancelled(true);
+      
+      ItemStack clicked = e.getCurrentItem();
+      if ((clicked != null) && (clicked.getType() != Material.AIR)) {
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.GRAY + "Sharpness")) {
+          p.closeInventory();
+          p.openInventory(SwordMainConfirmationSharpBook);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.GRAY + "Unbreaking")) {
+          p.closeInventory();
+          p.openInventory(SwordMainConfirmationUnbreakingBook);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.GOLD + "Knockback")) {
+          p.closeInventory();
+          p.openInventory(SwordMainConfirmationKnockbackBook);
+          return;
+        }
+        
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.RED + "Fire aspect")) {
+          p.closeInventory();
+          p.openInventory(SwordMainConfirmationFireAspectBook);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.DARK_PURPLE + "Looting")) {
+          p.closeInventory();
+          p.openInventory(SwordMainConfirmationLootingBook);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.RED + "Go back")) {
+          p.closeInventory();
+          p.openInventory(mainInventory);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.BLACK + "Smite")) {
+          p.closeInventory();
+          p.openInventory(SwordMainConfirmationSmiteBook);
+          return;
+        }
+        
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.DARK_BLUE + "Arcane frost book")) {
+          p.closeInventory();
+          p.openInventory(SwordMainConfirmationArcaneFrostBook);
+          return;
+        }
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.DARK_BLUE + "Arcane" + ChatColor.AQUA + "frost" + ChatColor.RED + " Burn")) {
+          p.closeInventory();
+          p.openInventory(SwordMainConfirmationArcaneFrostBurnBook);
+          return;
+        }
+        
+        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.DARK_BLUE + "Arcane" + ChatColor.BLUE + "Ice" + ChatColor.AQUA + "Shards")) {
+          p.closeInventory();
+          p.openInventory(SwordMainConfirmationArcaneIceShardsBook);
+          return;
+        }
+      }
+    }
+  }
+  
+  @EventHandler
+  public void OnSwordConfirmationEvent(InventoryClickEvent e) {
+    Player p = (Player)e.getWhoClicked();
+    
+    if (e.getInventory().getName().equals(ChatColor.AQUA + "Are you sure you wish to continue?")) {
+      e.setCancelled(true);
+      
+      ItemStack clicked = e.getCurrentItem();
+      if ((clicked.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Purchase Enchantment?")) && 
+        (((String)clicked.getItemMeta().getLore().get(0)).equalsIgnoreCase(ChatColor.DARK_GREEN + "Sharpness"))) {
+        ItemStack sword = p.getInventory().getItemInMainHand();
+        int sharpness = sword.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
+        if ((sword.getType() == Material.WOOD_SWORD) && 
+          (sword.containsEnchantment(Enchantment.DAMAGE_ALL))) {
+          if (sharpness == 0) {
+            p.sendMessage(ChatColor.GREEN + "Your sword was enchanted to tier 1");
+            eco.withdrawPlayer(p, 75.0D);
+            sword.addEnchantment(Enchantment.DAMAGE_ALL, 1);
+            p.closeInventory();
+            return;
+          }
+          
+          if ((clicked.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Purchase Enchantment?")) && 
+            (((String)clicked.getItemMeta().getLore().get(0)).equalsIgnoreCase(ChatColor.DARK_GREEN + "Sharpness")) && 
+            (sword.getType() == Material.WOOD_SWORD) && 
+            (sword.containsEnchantment(Enchantment.DAMAGE_ALL))) {
+            if (sharpness == 1) {
+              p.sendMessage(ChatColor.AQUA + "Your sword was enchanted to tier 2");
+              eco.withdrawPlayer(p, 125.0D);
+              sword.addEnchantment(Enchantment.DAMAGE_ALL, 2);
+              p.closeInventory();
+              return;
+            }
+            
+            if ((clicked.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Purchase Enchantment?")) && 
+              (((String)clicked.getItemMeta().getLore().get(0)).equalsIgnoreCase(ChatColor.DARK_GREEN + "Sharpness")) && 
+              (sword.getType() == Material.WOOD_SWORD) && 
+              (sword.containsEnchantment(Enchantment.DAMAGE_ALL))) {
+              if (sharpness == 2) {
+                p.sendMessage(ChatColor.DARK_BLUE + "your sword has been enchanted to tier 3");
+                eco.withdrawPlayer(p, 150.0D);
+                sword.addEnchantment(Enchantment.DAMAGE_ALL, 3);
+                p.closeInventory();
+                return;
+              }
+              
+              if ((clicked.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Purchase Enchantment?")) && 
+                (((String)clicked.getItemMeta().getLore().get(0)).equalsIgnoreCase(ChatColor.DARK_GREEN + "Sharpness")) && 
+                (sword.getType() == Material.WOOD_SWORD) && 
+                (sword.containsEnchantment(Enchantment.DAMAGE_ALL))) {
+                if (sharpness == 3) {
+                  p.sendMessage(ChatColor.GREEN + "your sword has been enchanted to tier 4");
+                  eco.withdrawPlayer(p, 200.0D);
+                  sword.addEnchantment(Enchantment.DAMAGE_ALL, 4);
+                  p.closeInventory();
+                  return;
+                }
+                
+                if ((clicked.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Purchase Enchantment?!")) && 
+                  (((String)clicked.getItemMeta().getLore().get(0)).equalsIgnoreCase(ChatColor.DARK_GREEN + "Sharpness")) && 
+                  (sword.getType() == Material.WOOD_SWORD) && 
+                  (sword.containsEnchantment(Enchantment.DAMAGE_ALL))) {
+                  if (sharpness == 4) {
+                    p.sendMessage(ChatColor.WHITE + "your sword has been enchanted to tier 5");
+                    eco.withdrawPlayer(p, 280.0D);
+                    sword.addEnchantment(Enchantment.DAMAGE_ALL, 5);
+                    p.closeInventory();
+                    return;
+                  }
+                  
+                  if ((clicked.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Purchase Enchantment?")) && 
+                    (clicked.getItemMeta().getLore().equals(ChatColor.DARK_GREEN + "Sharpness")) && 
+                    (sword.getType() == Material.WOOD_SWORD) && 
+                    (sword.containsEnchantment(Enchantment.DAMAGE_ALL))) {
+                    if (sharpness == 5) {
+                      p.sendMessage(ChatColor.DARK_AQUA + "your sword has been enchanted to tier 6");
+                      eco.withdrawPlayer(p, 320.0D);
+                      sword.addEnchantment(Enchantment.DAMAGE_ALL, 6);
+                      p.closeInventory();
+                      return;
+                    }
+                    
+                    if ((clicked.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Purchase Enchantment?!")) && 
+                      (clicked.getItemMeta().getLore().equals(ChatColor.DARK_GREEN + "Sharpness")) && 
+                      (sword.getType() == Material.WOOD_SWORD) && 
+                      (sword.containsEnchantment(Enchantment.DAMAGE_ALL))) {
+                      if (sharpness == 6) {
+                        p.sendMessage(ChatColor.RED + "Your sword now has the highest possible enchant for sharpness");
+                        eco.withdrawPlayer(p, 600.0D);
+                        sword.addEnchantment(Enchantment.DAMAGE_ALL, 7);
+                        p.closeInventory();
+                        return;
+                      }
+                      
+                      if ((clicked.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Purchase Enchantment?")) && 
+                        (((String)clicked.getItemMeta().getLore().get(0)).equalsIgnoreCase(ChatColor.DARK_GREEN + "Sharpness")) && 
+                        (sharpness == 7) && 
+                        (sword.getType() == Material.WOOD_SWORD)) {
+                        if (sword.containsEnchantment(Enchantment.DAMAGE_ALL)) {
+                          p.sendMessage(ChatColor.RED + "Your weapon has the highest sharpness level already");
+                          p.closeInventory();
+                          return;
+                        }
+                        
+                        if (clicked.getItemMeta().getLore().equals(ChatColor.RED + "Cancel purchase")) {
+                          p.closeInventory();
+                        }
+                        if (clicked.getItemMeta().getDisplayName().equals(ChatColor.RED + "Go back")) {
+                          p.closeInventory();
+                          p.openInventory(mainInventory);
+                          return;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
